@@ -1,0 +1,23 @@
+# Starship Configuration File
+
+# Directory
+[directory]
+truncation_length = 16
+prefix = ": "
+style = "italic blue"
+
+# Time
+[time]
+disabled = false
+format = "🕙[%T]"
+
+# Username
+[username]
+style_root = "bold bg:red fg:black"
+style_user = "bold red"
+show_always = true
+
+# Hostname
+[hostname]
+ssh_only = false
+style = "bold cyan"
