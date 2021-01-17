@@ -6,8 +6,9 @@ scrolling:
 
 font:
   size: 12
+  family: Fira Code
 
-background_opacity: 0.96
+background_opacity: 0.92
 
 # GNOME Terminal Tango Dark
 colors:
@@ -43,16 +44,16 @@ colors:
     white: '0xebdbb2'
   indexed_colors: []
   cursor:
-    text: '0x020221'
-    cursor: '0xffe8c0'
+    text: '0xd8d8d8'
+    cursor: '0xd8d8d8'
 
   # Normal colors
   dim:
-    black: '0x31363b'
-    red: '0x783228'
-    green: '0x17a262'
-    yellow: '0xb65619'
-    blue: '0x1b668f'
-    magenta: '0x614a73'
-    cyan: '0x186c60'
-    white: '0x63686d'
+    black: '0x232323'
+    red: '0x74423f'
+    green: '0x5e6547'
+    yellow: '0x8b7653'
+    blue: '0x556b79'
+    magenta: '0x6e4962'
+    cyan: '0x5c8482'
+    white: '0x828282'
