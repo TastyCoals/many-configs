@@ -3,16 +3,17 @@
 # Directory
 [directory]
 truncation_length = 16
-prefix = ": "
 style = "italic blue"
 
 # Time
 [time]
 disabled = false
-format = "🕙[%T]"
+format = "[$time]($style) "
+time_format = "🕙[%T]"
 
 # Username
 [username]
+format = "[$user]($style)@"
 style_root = "bold bg:red fg:black"
 style_user = "bold red"
 show_always = true
