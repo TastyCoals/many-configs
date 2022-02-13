@@ -11,7 +11,8 @@ call plug#begin(stdpath('data') . 'vimplug')
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
     Plug 'glepnir/galaxyline.nvim', { 'branch': 'main' }
-    Plug 'kyazdani42/nvim-web-devicons'  " needed for galaxyline icons
+    "Plug 'kyazdani42/nvim-web-devicons'  " needed for galaxyline icons
+    Plug 'ryanoasis/vim-devicons' " vimscript
 
     Plug 'NLKNguyen/papercolor-theme'
     Plug 'nikvdp/neomux'
@@ -24,16 +25,22 @@ call plug#begin(stdpath('data') . 'vimplug')
     Plug 'tpope/vim-fugitive'
 
     Plug 'tomtom/tcomment_vim'
-
+    
     Plug 'kyazdani42/nvim-web-devicons' " for file icons
     Plug 'kyazdani42/nvim-tree.lua'
+
+    Plug 'preservim/nerdcommenter' " NERD Commenter for smart commenting
+    Plug 'preservim/tagbar' " Tagbar for code navigation
+
+    Plug 'airblade/vim-gitgutter' " GitGutter
+
+    Plug 'romgrk/barbar.nvim'
 call plug#end()
 
 
-
+"============= basic settings ==================================================
 colorscheme PaperColor
 
-"============= basic settings ==================================================
 syntax on
 set number
 "set relativenumber
@@ -51,12 +58,21 @@ set hlsearch
 set virtualedit=all
 set backspace=indent,eol,start " allow backspacing over everything in insert mode
 set autoindent
+set cursorline
 set mouse=a  " mouse support
+set guifont=FiraCode\ Nerd\ Font\ Mono:h11
+
+
+"============= Custom settings =================================================
+let g:neovide_transparency=0.98
 
 
 "============== Custom Mappings ================================================
 nnoremap <M-Left> :tabprevious<CR>
 nnoremap <M-Right> :tabnext<CR>
+
+nmap <F8> :TagbarToggle<CR>
+
 
 " set leader key to ,
 let g:mapleader=","
@@ -119,7 +135,9 @@ nnoremap <C-n> :NvimTreeToggle<CR>
 lua <<EOF
 require("lsp")
 require("treesitter")
-require("statusbar")
+--require("statusbar")
+--require("eviline")
+require("spaceline")
 require("completion")
 require("nvim-tree")
 
@@ -129,7 +147,7 @@ require'nvim-tree'.setup {
   open_on_setup       = false,
   ignore_ft_on_setup  = {},
   auto_close          = true,
-  open_on_tab         = false,
+  open_on_tab         = true,
   hijack_cursor       = false,
   update_cwd          = false,
   update_to_buf_dir   = {
@@ -167,7 +185,7 @@ require'nvim-tree'.setup {
     width = 30,
     height = 30,
     hide_root_folder = false,
-    side = 'left',
+    side = 'right',
     auto_resize = false,
     mappings = {
       custom_only = false,
