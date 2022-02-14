@@ -35,6 +35,8 @@ call plug#begin(stdpath('data') . 'vimplug')
     Plug 'airblade/vim-gitgutter' " GitGutter
 
     Plug 'romgrk/barbar.nvim'
+
+    Plug 'lukas-reineke/indent-blankline.nvim' " Indent blankline
 call plug#end()
 
 
