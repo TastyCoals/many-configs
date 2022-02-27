@@ -6,11 +6,26 @@ call plug#begin(stdpath('data') . 'vimplug')
     Plug 'nvim-telescope/telescope.nvim'
     Plug 'neovim/nvim-lspconfig'
     Plug 'williamboman/nvim-lsp-installer', { 'branch': 'main' }
-    Plug 'hrsh7th/nvim-compe'
+   
+    " Auto-completion stuff
+    " Plug 'hrsh7th/nvim-compe' " deprecated
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'hrsh7th/cmp-buffer'
+    Plug 'hrsh7th/cmp-path'
+    Plug 'hrsh7th/cmp-cmdline'
+    Plug 'hrsh7th/nvim-cmp'
+    Plug 'tami5/lspsaga.nvim'
+    " For vsnip users.
+    Plug 'hrsh7th/cmp-vsnip'
+    Plug 'hrsh7th/vim-vsnip'
+
+    
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
     Plug 'glepnir/galaxyline.nvim', { 'branch': 'main' }
+
     "Plug 'kyazdani42/nvim-web-devicons'  " needed for galaxyline icons
     Plug 'ryanoasis/vim-devicons' " vimscript
 
@@ -37,6 +52,8 @@ call plug#begin(stdpath('data') . 'vimplug')
     Plug 'romgrk/barbar.nvim'
 
     Plug 'lukas-reineke/indent-blankline.nvim' " Indent blankline
+
+    Plug 'RRethy/vim-illuminate'
 call plug#end()
 
 
@@ -62,8 +79,10 @@ set backspace=indent,eol,start " allow backspacing over everything in insert mod
 set autoindent
 set cursorline
 set mouse=a  " mouse support
-set guifont=FiraCode\ Nerd\ Font\ Mono:h11
+set guifont=FiraCode\ Nerd\ Font\ Mono:h10
+set clipboard+=unnamedplus
 
+set completeopt=menu,menuone,noselect
 
 "============= Custom settings =================================================
 let g:neovide_transparency=0.98
@@ -134,15 +153,76 @@ nnoremap <silent> gs    <cmd>Lspsaga signature_help<CR>
 " >> NvimTree key bindings
 nnoremap <C-n> :NvimTreeToggle<CR>
 
+
 lua <<EOF
 require("lsp")
 require("treesitter")
 --require("statusbar")
 --require("eviline")
 require("spaceline")
-require("completion")
+--require("completion")
 require("nvim-tree")
 
+-- Init LspSaga
+local lspsaga = require 'lspsaga'
+lspsaga.setup { -- defaults ...
+  debug = false,
+  use_saga_diagnostic_sign = true,
+  -- diagnostic sign
+  error_sign = "",
+  warn_sign = "",
+  hint_sign = "",
+  infor_sign = "",
+  diagnostic_header_icon = "   ",
+  -- code action title icon
+  code_action_icon = " ",
+  code_action_prompt = {
+    enable = true,
+    sign = true,
+    sign_priority = 40,
+    virtual_text = true,
+  },
+  finder_definition_icon = "  ",
+  finder_reference_icon = "  ",
+  max_preview_lines = 10,
+  finder_action_keys = {
+    open = "o",
+    vsplit = "s",
+    split = "i",
+    quit = "q",
+    scroll_down = "<C-f>",
+    scroll_up = "<C-b>",
+  },
+  code_action_keys = {
+    quit = "q",
+    exec = "<CR>",
+  },
+  rename_action_keys = {
+    quit = "<C-c>",
+    exec = "<CR>",
+  },
+  definition_preview_icon = "  ",
+  border_style = "single",
+  rename_prompt_prefix = "➤",
+  rename_output_qflist = {
+    enable = false,
+    auto_open_qflist = false,
+  },
+  server_filetype_map = {},
+  diagnostic_prefix_format = "%d. ",
+  diagnostic_message_format = "%m %c",
+  highlight_prefix = false,
+}
+
+-- vim-illuminate
+require'lspconfig'.gopls.setup {
+  on_attach = function(client)
+    -- [[ other on_attach code ]]
+    require 'illuminate'.on_attach(client)
+  end,
+}
+
+-- nvim-tree
 require'nvim-tree'.setup {
   disable_netrw       = true,
   hijack_netrw        = true,
@@ -210,4 +290,74 @@ require'nvim-tree'.setup {
     }
   }
 }
+
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    mapping = {
+      ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+      ['<C-e>'] = cmp.mapping({
+        i = cmp.mapping.abort(),
+        c = cmp.mapping.close(),
+      }),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  --require('lspconfig')['html pylsp bashls clangd yamlls vimls rust_analyzer taplo ltex'].setup {
+  --require('lspconfig')['html']['pylsp']['bashls']['clangd']['yamlls']['vimls']['rust_analyzer']['taplo']['ltex'].setup {
+  --require('lspconfig')['rust_analyzer','taplo'].setup {
+  --  capabilities = capabilities
+  --}
+  local lspconfig = require('lspconfig')
+
+  -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
+  local servers = { 'clangd', 'rust_analyzer', 'pylsp', 'bashls' }
+  for _, lsp in ipairs(servers) do
+    lspconfig[lsp].setup {
+      -- on_attach = my_custom_on_attach,
+      capabilities = capabilities,
+    }
+  end
 EOF
