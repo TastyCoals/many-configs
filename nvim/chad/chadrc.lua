@@ -3,9 +3,16 @@ local M = {}
 -- make sure you maintain the structure of `core/default_config.lua` here,
 -- example of changing theme:
 
--- Options
+-- Set options
+vim.opt.colorcolumn = "120"
+
+
+-- Override default options
 M.options = {
    mapleader = ";",
+   ruler = true,
+   tabstop = 4,
+   shiftwidth = 4,
 }
 
 
