@@ -5,6 +5,7 @@ local M = {}
 
 -- Set options
 vim.opt.colorcolumn = "120"
+vim.opt.guifont="FiraCode Nerd Font Mono:h12"
 
 
 -- Override default options
@@ -13,6 +14,10 @@ M.options = {
    ruler = true,
    tabstop = 4,
    shiftwidth = 4,
+   
+   lspconfig = {
+      setup_lspconf = "custom.plugins.lspconfig",
+   },
 }
 
 
@@ -37,5 +42,6 @@ M.plugins = {
 
    install = userPlugins
 }
+
 
 return M
